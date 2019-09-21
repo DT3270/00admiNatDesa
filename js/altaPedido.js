@@ -144,14 +144,14 @@
     miPedido.puntos = puntos.value;
     miPedido.notas = notas.value;
 
-    ciclo = "";
-    cliente = "";
-    producto = "";
-    precio = "";
-    porGanancia = "";
-    cantidad = "";
-    puntos = "";
-    notas = "";
+    ciclo.value = "";
+    cliente.value = "";
+    producto.value = "";
+    precio.value = "";
+    porGanancia.value = "";
+    cantidad.value = "";
+    puntos.value = "";
+    notas.value = "";
 
     var miString = JSON.stringify(miPedido);
     request.open("post", apiUrl, true);
