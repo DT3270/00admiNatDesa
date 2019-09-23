@@ -1,0 +1,11 @@
+.select {
+   border: blue;
+   border-radius: 6px;
+   text-align: center;
+   text-decoration: none;
+   display: inline-block;
+   margin: 2px 2px;
+   cursor: pointer;
+   -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}

@@ -1,6 +1,11 @@
 
   function altaPedido () {
 
+    document.getElementById('selCiclo').addEventListener('change', function (e) {
+      eliminarTabla();
+      obtenerPedidos();  
+    });
+
     obtenerPedidos();
 
     document.getElementById('ciclo').addEventListener('keypress', function (e) {
@@ -62,7 +67,7 @@
   };
 
   function obtenerPedidos() {
-    // Create a request variable and assign a new XMLHttpRequest object to it.
+    // Consulta la base y deja la respuesta en la variabla json.
     var request = new XMLHttpRequest();
     var apiUrl = urlServer + "/pedidos";
     request.open("get", apiUrl, true);
@@ -71,53 +76,82 @@
     request.onload = function () {
         
       var json = JSON.parse(request.response);
-      var tabla = [];
-      var totPag = 0;
-      var totCob = 0;
-      var cuanPun = 0;
-      var cuanGan = 0; 
 
+      // Guardo la opción seleccionada
+      var selCiclo = document.getElementById("selCiclo");
+      var seleccion = selCiclo.value;
+      // Recorro el json cargando el combo de ciclos.
+      var ciclos = [];
       for (i=json.length-1;i>-1;i--){
+          ciclos.push(json[i].ciclo)
+      }; //end-for
+      console.log(ciclos)
+      ciclos.sort()
+      var listaCiclos = ciclos.filter(function(valor, indiceActual, arreglo) {
+          var indiceAlBuscar = arreglo.indexOf(valor);
+          if (indiceActual === indiceAlBuscar) {
+              return true;
+          } else {
+              return false;
+          }
+      });
+      // Cargo los ciclos
+      selCiclo.length = 0;
+      console.log('selCiclo', selCiclo)
+      var j=1;
+      for(var i=listaCiclos.length-1;i>-1;i--){ 
+        selCiclo.options[j] = new Option('Ciclo: ' + listaCiclos[i], listaCiclos[i], false, false);
+        j++
+      }; //end-for
+      selCiclo.value = seleccion
+      // Recorro el json cargando la tabla.
+      var tabla = [];
+//    var totPag = 0;
+//    var totCob = 0;
+//    var cuanPun = 0;
+//    var cuanGan = 0; 
+      for (i=json.length-1;i>-1;i--){
+        if (json[i].ciclo == selCiclo.value||selCiclo.value == 0) {
+          
+          var linea = [];
 
-        var linea = [];
+          linea.push(document.createTextNode('C' + json[i].ciclo));
+          linea.push(document.createTextNode(json[i].cliente));
+          linea.push(document.createTextNode(json[i].producto));
+          linea.push(document.createTextNode(json[i].cantidad));
+          linea.push(document.createTextNode('$' + json[i].precio.toFixed(2)));
+          linea.push(document.createTextNode('$' + (json[i].precio * json[i].cantidad).toFixed(2)));
+          linea.push(document.createTextNode(json[i].porGanancia));
+          var ganancia = (json[i].precio * json[i].porGanancia / 100) * json[i].cantidad;
+          linea.push(document.createTextNode('$' + ganancia.toFixed(2)));
+          var puntos = json[i].puntos * json[i].cantidad;
+          linea.push(document.createTextNode(puntos));
+          linea.push(document.createTextNode(json[i].notas));
 
-        linea.push(document.createTextNode('C' + json[i].ciclo));
-        linea.push(document.createTextNode(json[i].cliente));
-        linea.push(document.createTextNode(json[i].producto));
-        linea.push(document.createTextNode(json[i].cantidad));
-        linea.push(document.createTextNode('$' + json[i].precio.toFixed(2)));
-        linea.push(document.createTextNode('$' + (json[i].precio * json[i].cantidad).toFixed(2)));
-        linea.push(document.createTextNode(json[i].porGanancia));
-        var ganancia = (json[i].precio * json[i].porGanancia / 100) * json[i].cantidad;
-        linea.push(document.createTextNode('$' + ganancia.toFixed(2)));
-        var puntos = json[i].puntos * json[i].cantidad;
-        linea.push(document.createTextNode(puntos));
-        linea.push(document.createTextNode(json[i].notas));
+//      totCob = totCob + json[i].precio * json[i].cantidad;
+//      cuanGan = cuanGan + ganancia;
+//      cuanPun = cuanPun + puntos;
 
-        totCob = totCob + json[i].precio * json[i].cantidad;
-        cuanGan = cuanGan + ganancia;
-        cuanPun = cuanPun + puntos;
-
-        var button = document.createElement('button');
-        button.type = 'button';
-        button.style = 'border: none; background-color: transparent';
-        button.innerText = 'eliminar';
-        button.id = json[i]._id;
-        button.addEventListener('click', function(e){
-          eliminarPedido(e.path[0].id);
-        });
-        linea.push(button);
-        tabla.push(linea);
-
-      };
+          var button = document.createElement('button');
+          button.type = 'button';
+          button.style = 'border: none; background-color: transparent';
+          button.innerText = 'eliminar';
+          button.id = json[i]._id;
+          button.addEventListener('click', function(e){
+            eliminarPedido(e.path[0].id);
+          });
+          linea.push(button);
+          tabla.push(linea);
+        }; //end-if
+      }; //end-for
       tabGlob = tabla;
       var tit = ["Ciclo", "Cliente", "Producto", "Cantidad", "Precio Unitario", "Precio", "%", "Ganancia", "Puntos", "Notas", ""];
       crearTabla(tit, tabGlob);
-      document.getElementById('cantPed').value = json.length;
-      document.getElementById('totPag').value = '$' + (totCob - cuanGan);
-      document.getElementById('cuanGan').value = '$' + cuanGan;
-      document.getElementById('totCob').value = '$' + totCob;
-      document.getElementById('cuanPun').value = cuanPun;
+//    document.getElementById('cantPed').value = json.length;
+//    document.getElementById('totPag').value = '$' + (totCob - cuanGan);
+//    document.getElementById('cuanGan').value = '$' + cuanGan;
+//    document.getElementById('totCob').value = '$' + totCob;
+//    document.getElementById('cuanPun').value = cuanPun;
     };
   };
 
