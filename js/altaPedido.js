@@ -105,10 +105,11 @@
       selCiclo.value = seleccion
       // Recorro el json cargando la tabla.
       var tabla = [];
-//    var totPag = 0;
-//    var totCob = 0;
-//    var cuanPun = 0;
-//    var cuanGan = 0; 
+      var cantPed = 0;
+      var totCob = 0;
+      var cuanPun = 0;
+      var cuanGan = 0;
+      var totProd = 0;
       for (i=json.length-1;i>-1;i--){
         if (json[i].ciclo == selCiclo.value||selCiclo.value == 0) {
           
@@ -127,9 +128,11 @@
           linea.push(document.createTextNode(puntos));
           linea.push(document.createTextNode(json[i].notas));
 
-//      totCob = totCob + json[i].precio * json[i].cantidad;
-//      cuanGan = cuanGan + ganancia;
-//      cuanPun = cuanPun + puntos;
+          totProd = totProd + json[i].cantidad;
+          totCob = totCob + json[i].precio * json[i].cantidad;
+          cuanGan = cuanGan + ganancia;
+          cuanPun = cuanPun + puntos;
+          cantPed = cantPed + 1;
 
           var button = document.createElement('button');
           button.type = 'button';
@@ -146,11 +149,12 @@
       tabGlob = tabla;
       var tit = ["Ciclo", "Cliente", "Producto", "Cantidad", "Precio Unitario", "Precio", "%", "Ganancia", "Puntos", "Notas", ""];
       crearTabla(tit, tabGlob);
-//    document.getElementById('cantPed').value = json.length;
-//    document.getElementById('totPag').value = '$' + (totCob - cuanGan);
-//    document.getElementById('cuanGan').value = '$' + cuanGan;
-//    document.getElementById('totCob').value = '$' + totCob;
-//    document.getElementById('cuanPun').value = cuanPun;
+      document.getElementById('cantPed').innerHTML = '<p class="p3">Cantidad de pedidos: <b>' + cantPed + '</b></p>';
+      document.getElementById('totPag').innerHTML = '<p class="p3"> Total a pagar: <b>$ ' + (totCob - cuanGan).toFixed(2) + '</b></p>';
+      document.getElementById('cuanGan').innerHTML = '<p class="p3"> Total ganado: <b>$ ' + cuanGan.toFixed(2) + '</b></p>';
+      document.getElementById('totCob').innerHTML = '<p class="p3"> Total a cobrar: <b>$ ' + totCob.toFixed(2) + '</b></p>';
+      document.getElementById('cuanPun').innerHTML = '<p class="p3"> Puntos ganados: <b>' + cuanPun + '</b></p>';
+      document.getElementById('cantProd').innerHTML = '<p class="p3"> Cantidad de productos: <b>' + totProd + '</b></p>';
     };
   };
 
