@@ -85,7 +85,6 @@
       for (i=json.length-1;i>-1;i--){
           ciclos.push(json[i].ciclo)
       }; //end-for
-      console.log(ciclos)
       ciclos.sort()
       var listaCiclos = ciclos.filter(function(valor, indiceActual, arreglo) {
           var indiceAlBuscar = arreglo.indexOf(valor);
@@ -97,7 +96,7 @@
       });
       // Cargo los ciclos
       selCiclo.length = 0;
-      console.log('selCiclo', selCiclo)
+      selCiclo.options[0] = new Option('Ciclo: Todos', 0, false, false);
       var j=1;
       for(var i=listaCiclos.length-1;i>-1;i--){ 
         selCiclo.options[j] = new Option('Ciclo: ' + listaCiclos[i], listaCiclos[i], false, false);
